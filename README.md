@@ -37,8 +37,8 @@
 * **滑鼠左鍵、空白鍵、Enter鍵**：推進對話 / 選擇選項
 * **點擊遊戲結束按鈕**：關閉遊戲
 ## **遊戲企劃介紹Notion頁面**
-👉 **[[遊戲企劃書《虛擬之愛：擬態入侵》互動敘事 Demo_Notion](https://github.com/feach89/VirtualLove_Demo/releases/tag/v1.0.0
-))]
+👉 **[遊戲企劃書《虛擬之愛：擬態入侵》互動敘事 Demo Notion](https://github.com/feach89/VirtualLove_Demo/releases/tag/v1.0.0
+)**
 https://app.notion.com/p/Demo-296fd68a05bc80418ecaf58b5d983713#365fd68a05bc800d86dac8db03b1a3c4
 ## 🖼️ 遊戲截圖
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/90310fa7-c939-43d0-a15a-e9bdf7db777c" />
