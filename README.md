@@ -33,11 +33,14 @@
 > 
 > 獲利方式
 > 上架至平台買斷制
-## **遊戲企劃介紹Notion頁面**
-https://app.notion.com/p/Demo-296fd68a05bc80418ecaf58b5d983713#365fd68a05bc800d86dac8db03b1a3c4
 ## **操作說明**
 * **滑鼠左鍵、空白鍵、Enter鍵**：推進對話 / 選擇選項
 * **點擊遊戲結束按鈕**：關閉遊戲
-
+## **遊戲企劃介紹Notion頁面**
+https://app.notion.com/p/Demo-296fd68a05bc80418ecaf58b5d983713#365fd68a05bc800d86dac8db03b1a3c4
 ## 🖼️ 遊戲截圖
-（你可以直接把你在 Unity 裡做好的超美「標題畫面」和「遊戲對話畫面」的截圖，用滑鼠直接拖曳進來這個編輯框裡，GitHub 會自動幫你轉成圖片！）
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/90310fa7-c939-43d0-a15a-e9bdf7db777c" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/09b1e386-6add-48b2-88d4-ce7594da4537" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c3b4cc16-581c-4653-8863-4891482a8ed1" />
+
+
