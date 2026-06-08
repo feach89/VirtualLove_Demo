@@ -6,8 +6,8 @@
 
 ## 🎮 遊戲下載與試玩
 👉 **[[點擊這裡下載最新 Demo 版 (ZIP檔](https://github.com/feach89/VirtualLove_Demo/releases/tag/v1.0.0
-))](請在這裡貼上你剛剛 Release 頁面的網址)**
-*(下載後請解壓縮，點擊 `My project.exe` 即可遊玩)*
+))]
+*(下載後請解壓縮，點擊 `VirtualLove_Demo.exe` 即可遊玩)*
 
 ## 📖 遊戲簡介
 （這裡可以把你企劃書上的短篇劇情大綱、奴隸起義推翻等設定寫上來）
