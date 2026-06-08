@@ -1,5 +1,3 @@
-# VirtualLove_Demo
-《虛擬之愛：擬態入侵》互動敘事遊戲 Demo
 # 《虛擬之愛：擬態入侵》(Virtual Love: Mimic Invasion)
 
 這是一款使用 Unity 開發的 AVG 視覺小說互動敘事遊戲 Demo。
@@ -39,7 +37,7 @@
 本Demo v1.0製作了遊戲的開始選單，以及第一個H劇情的對話事件。
 ## **遊戲企劃介紹Notion頁面**
 https://app.notion.com/p/Demo-296fd68a05bc80418ecaf58b5d983713#365fd68a05bc800d86dac8db03b1a3c4
-##**操作方式**
+## **操作說明**
 * **滑鼠左鍵、空白鍵、Enter鍵**：推進對話 / 選擇選項
 * **/ 點擊遊戲結束按鈕**：關閉遊戲
 
