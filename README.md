@@ -4,7 +4,7 @@
 
 ## 🎮 遊戲下載與試玩
 👉 **[[點擊這裡下載最新 Demo 版 （ZIP檔）](https://github.com/feach89/VirtualLove_Demo/releases/tag/v1.0.0
-))]**
+))**
 *(下載後請解壓縮，點擊 `VirtualLove_Demo.exe` 即可遊玩)*
 
 ## **遊戲概念**
