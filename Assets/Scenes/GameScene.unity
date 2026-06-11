@@ -464,7 +464,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -7925054660822421292, guid: 9942656a70401a04994e24b87bd47b45, type: 3}
+  m_Sprite: {fileID: -8681276808020587146, guid: 30a84abffeaa21a428b907ae3a2976b7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -483,8 +483,8 @@ Transform:
   m_GameObject: {fileID: 569154782}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.64, y: -1.66, z: 0}
-  m_LocalScale: {x: 1.4066101, y: 1.38373, z: 1}
+  m_LocalPosition: {x: -0.18, y: -0.26, z: 0}
+  m_LocalScale: {x: 1.3188376, y: 1.2244627, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -702,7 +702,7 @@ MonoBehaviour:
   - {fileID: -8872197315964661704, guid: 09c5933c9e2aa2b43adfb3d33c9ad5bd, type: 3}
   - {fileID: -2114915054583029647, guid: 3e040469ff84a684fb7e59b29c40a930, type: 3}
   - {fileID: -9033890922004281737, guid: f89b2012500ab55499b8e264ad76ed12, type: 3}
-  - {fileID: -7925054660822421292, guid: 9942656a70401a04994e24b87bd47b45, type: 3}
+  - {fileID: -8681276808020587146, guid: 30a84abffeaa21a428b907ae3a2976b7, type: 3}
   storyChapters:
   - {fileID: 4900000, guid: 7ea0c13caae7aae499daf0b7249da088, type: 3}
   dialogList: []

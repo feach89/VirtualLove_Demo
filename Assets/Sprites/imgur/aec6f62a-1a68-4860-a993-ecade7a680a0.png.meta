@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9942656a70401a04994e24b87bd47b45
+guid: 30a84abffeaa21a428b907ae3a2976b7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7925054660822421292
-    second: ComfyUI_temp_ypjos_00006__0
+      213: -8681276808020587146
+    second: aec6f62a-1a68-4860-a993-ecade7a680a0_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,12 +113,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ComfyUI_temp_ypjos_00006__0
+      name: aec6f62a-1a68-4860-a993-ecade7a680a0_0
       rect:
         serializedVersion: 2
-        x: 172
+        x: 11
         y: 0
-        width: 715
+        width: 1494
         height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4d0302456cc840290800000000000000
-      internalID: -7925054660822421292
+      spriteID: 67d881d0db8e58780800000000000000
+      internalID: -8681276808020587146
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ComfyUI_temp_ypjos_00006__0: -7925054660822421292
+      aec6f62a-1a68-4860-a993-ecade7a680a0_0: -8681276808020587146
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
