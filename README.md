@@ -3,7 +3,7 @@
 這是一款使用 Unity 開發的 AVG 視覺小說互動敘事遊戲 Demo。
 
 ## 🎮 遊戲下載與試玩
-👉 **[點擊這裡下載最新 Demo 版 （ZIP檔）]([https://github.com/feach89/VirtualLove_Demo/releases/tag/v1.0.0](https://github.com/feach89/VirtualLove_Demo/releases/tag/v2.0.0)
+👉 **[點擊這裡下載最新 Demo 版 （ZIP檔）]([https://github.com/feach89/VirtualLove_Demo/releases/tag/v2.0.0]
 )**
 *(下載後請解壓縮，點擊 `VirtualLove_Demo.exe` 即可遊玩)*
 
