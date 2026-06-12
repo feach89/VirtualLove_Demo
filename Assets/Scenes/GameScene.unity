@@ -734,12 +734,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -8681276808020587146, guid: 30a84abffeaa21a428b907ae3a2976b7, type: 3}
+  m_Sprite: {fileID: -818276742042887590, guid: 4ed96d42f1de343458720eb5033bfe2a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 6.01, y: 12.07}
+  m_Size: {x: 14.94, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1207,16 +1207,17 @@ MonoBehaviour:
   - {fileID: 1427053909}
   blinkSpeed: 2
   sprites:
-  - {fileID: -9033890922004281737, guid: f89b2012500ab55499b8e264ad76ed12, type: 3}
-  - {fileID: -8872197315964661704, guid: 09c5933c9e2aa2b43adfb3d33c9ad5bd, type: 3}
-  - {fileID: -2114915054583029647, guid: 3e040469ff84a684fb7e59b29c40a930, type: 3}
+  - {fileID: 1002366702538035222, guid: 4b413b0111533cb4fb5018924c092aa5, type: 3}
+  - {fileID: 2596820255133087054, guid: f872eb7f5fc861741835692a2bfc1346, type: 3}
+  - {fileID: -3670355198534575993, guid: 63ec5ebd27aa711488dba283ccbd8db7, type: 3}
   - {fileID: 6183856849916467844, guid: 581d82addecfacd469b2a8e1f0fc5ffb, type: 3}
   - {fileID: -8076198819156529630, guid: 861c4c1d4dfbb954ab27be7d5c35ccbd, type: 3}
   - {fileID: 7107099564537506761, guid: 250724260ba52f24a84615061754a6e0, type: 3}
-  - {fileID: -8681276808020587146, guid: 30a84abffeaa21a428b907ae3a2976b7, type: 3}
-  - {fileID: 5593478087564594157, guid: e16e8a37b5525da4cb22e977a55294a5, type: 3}
-  - {fileID: -8681276808020587146, guid: 30a84abffeaa21a428b907ae3a2976b7, type: 3}
+  - {fileID: -818276742042887590, guid: 4ed96d42f1de343458720eb5033bfe2a, type: 3}
+  - {fileID: 6196731580971188724, guid: 6fc58078b4d194e44abf145874480469, type: 3}
+  - {fileID: 649023186836183959, guid: facce107ad3d0314ab04ed8b88a2331f, type: 3}
   storyChapters:
+  - {fileID: 4900000, guid: 566f792e9873e5443808d11f9242e31d, type: 3}
   - {fileID: 4900000, guid: 0d38d02b421fc3a458b35302a45f1e4b, type: 3}
   dialogList: []
   currentLineIndex: 0
@@ -1785,7 +1786,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -9033890922004281737, guid: f89b2012500ab55499b8e264ad76ed12, type: 3}
+  m_Sprite: {fileID: 1002366702538035222, guid: 4b413b0111533cb4fb5018924c092aa5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e16e8a37b5525da4cb22e977a55294a5
+guid: 6fc58078b4d194e44abf145874480469
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5593478087564594157
-    second: 5wm31db0_0
+      213: 6196731580971188724
+    second: figure_imgur2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 5wm31db0_0
+      name: figure_imgur2_0
       rect:
         serializedVersion: 2
         x: 529
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: deb08346fa600ad40800000000000000
-      internalID: 5593478087564594157
+      spriteID: 4f18b3c8a863ff550800000000000000
+      internalID: 6196731580971188724
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      5wm31db0_0: 5593478087564594157
+      figure_imgur2_0: 6196731580971188724
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

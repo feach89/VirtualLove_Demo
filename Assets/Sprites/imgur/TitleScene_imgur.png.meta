@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7e0d404be3f21a24eb261f807bc830ae
+guid: 042361569077b104ca4ca9aa93e6ecf8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1239377051377299192
-    second: ComfyUI_temp_fbyap_00001__0
+      213: -6731617650957468776
+    second: TitleScene_imgur_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ComfyUI_temp_fbyap_00001__0
+      name: TitleScene_imgur_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8fe6d1a9cd6233110800000000000000
-      internalID: 1239377051377299192
+      spriteID: 89b3eee796d7492a0800000000000000
+      internalID: -6731617650957468776
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ComfyUI_temp_fbyap_00001__0: 1239377051377299192
+      TitleScene_imgur_0: -6731617650957468776
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
