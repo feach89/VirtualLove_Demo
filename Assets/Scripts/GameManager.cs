@@ -82,14 +82,58 @@
             }
         }
 
-        void Start()
+    void Start()
+    {
+        // 🌟 啟動時先檢查：玩家是不是透過「跳轉按鈕」進來的？
+        string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
+
+        if (!string.IsNullOrEmpty(targetAnchor))
         {
-            // 遊戲開始時，自動載入第一個放置的劇本檔案
+            Debug.Log("檢測到跳躍指令！準備空降至錨點：" + targetAnchor);
+            // 消耗掉這次跳轉指令，以免下次開遊戲又亂跳
+            PlayerPrefs.DeleteKey("JumpTargetAnchor");
+
+            // 執行跨章節錨點搜尋與空降
+            ExecuteAnchorJump(targetAnchor);
+        }
+        else
+        {
+            // 如果字串是空的，代表是正常開始遊戲
             if (storyChapters.Count > 0 && storyChapters[0] != null)
             {
                 LoadChapter(storyChapters[0].name);
             }
         }
+    }
+
+    /// <summary>
+    /// 🌟 全新新增：跨章節搜尋錨點並空降
+    /// </summary>
+    private void ExecuteAnchorJump(string targetAnchor)
+    {
+        // 掃描劇本檔案庫裡的所有章節
+        foreach (var chapter in storyChapters)
+        {
+            ReadText(chapter); // 先把這個章節讀進 dialogList 裡看看
+
+            for (int i = 0; i < dialogList.Count; i++)
+            {
+                if (dialogList[i].Anchor == targetAnchor)
+                {
+                    Debug.Log("✅ 找到錨點了！位於章節 [" + chapter.name + "] 的第 " + i + " 行");
+                    currentLineIndex = i; // 插上書籤
+                    PlayCurrentLine();    // 開始播放
+                    return; // 任務完成，直接結束函式
+                }
+            }
+        }
+
+        // 如果全部章節都找完了還是沒看到該錨點
+        Debug.LogError("【跳轉失敗】在所有劇本中都找不到名為 [" + targetAnchor + "] 的錨點！");
+
+        // 防呆：找不到就從頭開始播
+        if (storyChapters.Count > 0) LoadChapter(storyChapters[0].name);
+    }
 
     void Update()
     {
@@ -402,7 +446,18 @@
             Debug.Log("3秒已過，現在點擊可以回到標題畫面了！");
 
             if (clickPrompt != null) clickPrompt.SetActive(true);
-        }
+
+        // 🌟 進入結局時，永久寫入通關標記到玩家電腦裡！
+        PlayerPrefs.SetInt("HasClearedEnding", 1);
+        PlayerPrefs.Save();
+
+        yield return new WaitForSeconds(5f);
+
+        canClickToTitle = true;
+        Debug.Log("5秒已過，現在點擊可以回到標題畫面了！");
+
+        if (clickPrompt != null) clickPrompt.SetActive(true);
+    }
         /// <summary>
         /// 🌟 讓任何指定的文字物件產生呼吸閃爍特效
         /// </summary>

@@ -283,7 +283,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2093501954}
         m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartNormalGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -957,7 +957,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1414033284}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093501954}
+        m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
+        m_MethodName: StartJumpGame
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Jump
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1414033284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1053,7 +1065,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1239377051377299192, guid: 7e0d404be3f21a24eb261f807bc830ae, type: 3}
+  m_Sprite: {fileID: -6731617650957468776, guid: 042361569077b104ca4ca9aa93e6ecf8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1343,6 +1355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47c95921d49207b4bb9adc2c5640eecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleManager
+  jumpButtonObj: {fileID: 1414033281}
+  gameSceneName: GameScene
 --- !u!4 &2093501955
 Transform:
   m_ObjectHideFlags: 0
