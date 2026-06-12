@@ -40,7 +40,7 @@
 👉 **[遊戲企劃書《虛擬之愛：擬態入侵》互動敘事 Demo Notion](https://app.notion.com/p/Demo-296fd68a05bc80418ecaf58b5d983713?source=copy_link)**
 ## 🖼️ 遊戲截圖
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/90310fa7-c939-43d0-a15a-e9bdf7db777c" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/09b1e386-6add-48b2-88d4-ce7594da4537" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/31ee4c61-e851-40b9-93d1-5f0050d8353c" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c3b4cc16-581c-4653-8863-4891482a8ed1" />
 
 
