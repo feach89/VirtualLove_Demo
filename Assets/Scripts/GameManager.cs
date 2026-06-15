@@ -4,6 +4,7 @@
     using UnityEngine.SceneManagement;
     using UnityEngine.UI; // 支援舊版 Text 與 Button 組件
 
+
     [System.Serializable]
     public class DialogData
     {
@@ -55,8 +56,17 @@
         public bool isEnding = false;
         public bool canClickToTitle = false;
         private bool isSelectingChoice = false; // 🌟 新增：是否正在選擇分歧選項
+        public bool isTransitioning = false; // 是否正在播放轉場動畫
+        public bool isStartingSequence = false; // 標記目前是否正在播開場動畫
 
-        private void Awake()
+    [Header("轉場特效綁定")]
+        public Image transitionPanel; // 拖曳剛剛做的全螢幕 Image 放到這裡
+
+        [Header("前導設定 (可選)")]
+        public GameObject prologueUI;         // 🌟 注意這裡變成了 GameObject！
+        public float prologueWaitTime = 2.0f; // 前導圖片要在畫面上停留幾秒
+
+    private void Awake()
         {
             // 建立圖片尋找捷徑
             if (sprites.Count >= 9)
@@ -84,26 +94,86 @@
 
     void Start()
     {
-        // 🌟 啟動時先檢查：玩家是不是透過「跳轉按鈕」進來的？
-        string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
+        // 啟動全新的「前導與開場演出」協程
+        StartCoroutine(GameStartSequence());
+    }
 
+    // 🌟 全新新增：開場專屬的演出時間軸
+    private System.Collections.IEnumerator GameStartSequence()
+    {
+        isTransitioning = true;
+        isStartingSequence = true; // 鎖定劇本特效
+
+        // 1. 強制隱藏對話框，黑布瞬間拉上 (全黑)
+        if (uiPanel != null) uiPanel.SetActive(false);
+        transitionPanel.gameObject.SetActive(true);
+        transitionPanel.color = Color.black;
+
+        // 2. 如果你有綁定「前導圖物件」，就執行前導演出
+        if (prologueUI != null)
+        {
+            // 確保前導圖開啟
+            prologueUI.SetActive(true);
+
+            // 先把背景畫布隱藏，確保前導圖的背後是純黑的
+            if (background_imgur != null) background_imgur.gameObject.SetActive(false);
+            if (figure != null) figure.sprite = null;
+
+            // 黑布慢慢拉開 (淡出)，顯示出你排好版的前導圖
+            yield return StartCoroutine(FadeTransition(0f, 1.0f));
+
+            // 停留設定的秒數
+            yield return new WaitForSeconds(prologueWaitTime);
+
+            // 黑布再度拉上 (淡入)
+            yield return StartCoroutine(FadeTransition(1f, 1.0f));
+
+            // 前導圖功成身退，把它關掉
+            prologueUI.SetActive(false);
+
+            // 把背景畫布重新打開，準備迎接正式遊戲
+            if (background_imgur != null) background_imgur.gameObject.SetActive(true);
+        }
+
+        // 3. 正式讀取劇本指令 (判斷跳躍或新遊戲)
+        string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
         if (!string.IsNullOrEmpty(targetAnchor))
         {
-            Debug.Log("檢測到跳躍指令！準備空降至錨點：" + targetAnchor);
-            // 消耗掉這次跳轉指令，以免下次開遊戲又亂跳
             PlayerPrefs.DeleteKey("JumpTargetAnchor");
-
-            // 執行跨章節錨點搜尋與空降
             ExecuteAnchorJump(targetAnchor);
         }
         else
         {
-            // 如果字串是空的，代表是正常開始遊戲
             if (storyChapters.Count > 0 && storyChapters[0] != null)
             {
                 LoadChapter(storyChapters[0].name);
             }
         }
+
+        // 4. 黑布慢慢拉開，並把對話框正式顯示出來！
+        if (uiPanel != null) uiPanel.SetActive(true);
+        yield return StartCoroutine(FadeTransition(0f, 1.0f));
+
+        transitionPanel.gameObject.SetActive(false); // 徹底關閉黑布
+        isTransitioning = false;
+        isStartingSequence = false; // 解鎖劇本特效！
+    }
+
+    // 專門給開場用的小幫手：平滑控制黑布的透明度
+    private System.Collections.IEnumerator FadeTransition(float targetAlpha, float duration)
+    {
+        float startAlpha = transitionPanel.color.a;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            // Mathf.Lerp 可以平滑地在兩個數字之間推移
+            float currentAlpha = Mathf.Lerp(startAlpha, targetAlpha, timer / duration);
+            transitionPanel.color = new Color(0f, 0f, 0f, currentAlpha);
+            yield return null;
+        }
+        transitionPanel.color = new Color(0f, 0f, 0f, targetAlpha); // 確保最終數值精準
     }
 
     /// <summary>
@@ -137,11 +207,10 @@
 
     void Update()
     {
-        // 1. 如果選選項中，攔截點擊並執行閃爍
-        if (isSelectingChoice)
+        // 如果在選分歧選項中，或【正在轉場中】，攔截點擊！
+        if (isSelectingChoice || isTransitioning)
         {
-            // 🌟 這裡呼叫閃爍，只要 isSelectingChoice 為 true，它就會一直閃
-            ApplyBlinkEffect(Divergent_texts);
+            if (isSelectingChoice) ApplyBlinkEffect(Divergent_texts);
             return;
         }
 
@@ -237,46 +306,150 @@
             }
         }
 
-        private void PlayCurrentLine()
+    private void PlayCurrentLine()
+    {
+        DialogData currentLine = dialogList[currentLineIndex];
+
+        if (currentLine.figure == "選項")
         {
-            DialogData currentLine = dialogList[currentLineIndex];
-
-            // 🌟 核心攔截：如果發現這一行的角色名字叫做「選項」，代表進入分歧點
-            if (currentLine.figure == "選項")
-            {
-                SetupChoiceBranch();
-                return; // 攔截中斷，不執行下方的文字顯示
-            }
-
-            UpdateText(currentLine.figure, currentLine.dialogue);
-
-            if (!string.IsNullOrEmpty(currentLine.background))
-            {
-                UpdateBackground(currentLine.background, currentLine.UID);
-                background_imgur.transform.localScale = new Vector3(1.05f, 1.05f, 1f);
-            }
-
-            if (!string.IsNullOrEmpty(currentLine.figure_show))
-            {
-                if (currentLine.figure_show == "None")
-                {
-                    figure.sprite = null;
-                }
-                else
-                {
-                    figure.sprite = GetSpriteByName(currentLine.figure_show);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySound(currentLine.sfx); }
-            if (!string.IsNullOrEmpty(currentLine.vfx)) { PlayTransition(currentLine.vfx); }
-            if (!string.IsNullOrEmpty(currentLine.BGM)) { PlaySound(currentLine.BGM); }
+            SetupChoiceBranch();
+            return;
         }
 
-        /// <summary>
-        /// 🌟 新增：掃描連續選項並動態設定 UI 按鈕
-        /// </summary>
-        private void SetupChoiceBranch()
+        // 判斷這行劇本有沒有寫轉場特效 (vfx)
+        if (!string.IsNullOrEmpty(currentLine.vfx))
+        {
+            // 有特效！啟動轉場協程
+            StartCoroutine(HandleTransitionLine(currentLine));
+        }
+        else
+        {
+            // 沒有特效，維持原本的瞬間切換
+            ApplyLineData(currentLine);
+        }
+    }
+
+    // 將原本負責「更新畫面上所有東西」的程式碼獨立出來
+    private void ApplyLineData(DialogData currentLine)
+    {
+        UpdateText(currentLine.figure, currentLine.dialogue);
+
+        if (!string.IsNullOrEmpty(currentLine.background))
+        {
+            UpdateBackground(currentLine.background, currentLine.UID);
+            background_imgur.transform.localScale = new Vector3(1.05f, 1.05f, 1f);
+        }
+
+        if (!string.IsNullOrEmpty(currentLine.figure_show))
+        {
+            if (currentLine.figure_show == "None")
+                figure.sprite = null;
+            else
+                figure.sprite = GetSpriteByName(currentLine.figure_show);
+        }
+
+        if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySound(currentLine.sfx); }
+        if (!string.IsNullOrEmpty(currentLine.BGM)) { PlaySound(currentLine.BGM); }
+    }
+
+    // 🌟 全新改良：精確辨識且支援「連續閃爍」的轉場協程
+    private System.Collections.IEnumerator HandleTransitionLine(DialogData currentLine)
+    {
+        isTransitioning = true; // 鎖住玩家點擊
+
+        // 先暫時隱藏對話框 UI
+        if (uiPanel != null) uiPanel.SetActive(false);
+        transitionPanel.gameObject.SetActive(true);
+
+        // ==========================================
+        // 1. 連續白屏閃現 (閃 3 次)
+        // ==========================================
+        if (currentLine.vfx == "白屏閃現")
+        {
+            float flashSpeed = 0.25f; // 閃爍的速度，數字越小閃越快
+
+            for (int i = 0; i < 3; i++) // 執行 3 次的迴圈
+            {
+                // 快速變白
+                float timer = 0f;
+                while (timer < flashSpeed)
+                {
+                    timer += Time.deltaTime;
+                    transitionPanel.color = new Color(1f, 1f, 1f, timer / flashSpeed);
+                    yield return null;
+                }
+                transitionPanel.color = Color.white;
+
+                // 🌟 關鍵：只有在「最後一次(第3次)」閃白的時候，才偷偷換掉背景跟立繪！
+                if (i == 2) ApplyLineData(currentLine);
+
+                // 快速變回透明
+                timer = 0f;
+                while (timer < flashSpeed)
+                {
+                    timer += Time.deltaTime;
+                    transitionPanel.color = new Color(1f, 1f, 1f, 1f - (timer / flashSpeed));
+                    yield return null;
+                }
+                transitionPanel.color = new Color(1f, 1f, 1f, 0f);
+
+                // 每次閃爍中間稍微停頓一極小段時間，讓節奏感更強烈
+                if (i < 2) yield return new WaitForSeconds(0.05f);
+            }
+        }
+        // ==========================================
+        // 2. 經典黑屏轉場 (關鍵字確實補回！)
+        // ==========================================
+        else if (currentLine.vfx == "黑屏轉場")
+        {
+            float fadeSpeed = 1.5f; // 黑屏速度
+
+            // 黑布慢慢拉上
+            float timer = 0f;
+            while (timer < fadeSpeed)
+            {
+                timer += Time.deltaTime;
+                transitionPanel.color = new Color(0f, 0f, 0f, timer / fadeSpeed);
+                yield return null;
+            }
+            transitionPanel.color = Color.black;
+
+            // 趁全黑時偷偷換素材
+            ApplyLineData(currentLine);
+
+            // 停頓一下讓玩家呼吸
+            yield return new WaitForSeconds(0.2f);
+
+            // 黑布慢慢拉開
+            timer = 0f;
+            while (timer < fadeSpeed)
+            {
+                timer += Time.deltaTime;
+                transitionPanel.color = new Color(0f, 0f, 0f, 1f - (timer / fadeSpeed));
+                yield return null;
+            }
+            transitionPanel.color = new Color(0f, 0f, 0f, 0f);
+        }
+        // ==========================================
+        // 3. 防呆機制：沒寫、或寫錯字
+        // ==========================================
+        else
+        {
+            // 如果 CSV 的 vfx 欄位寫了看不懂的字，就放棄特效，直接瞬間切換
+            ApplyLineData(currentLine);
+        }
+
+        // 轉場徹底結束，把黑布關掉，重新顯示對話框 UI
+        transitionPanel.gameObject.SetActive(false);
+        if (uiPanel != null) uiPanel.SetActive(true);
+
+        isTransitioning = false; // 解除點擊鎖定
+    }
+
+    /// <summary>
+    /// 🌟 新增：掃描連續選項並動態設定 UI 按鈕
+    /// </summary>
+    private void SetupChoiceBranch()
         {
             isSelectingChoice = true;
 
@@ -379,9 +552,8 @@
         }
 
         public void PlaySound(string soundName) { Debug.Log("🎵 播放音效：" + soundName); }
-        public void PlayTransition(string transitionName) { Debug.Log("✨ 觸發轉場特效：" + transitionName); }
-
-        public void UpdateText(string _name, string _text)
+    
+    public void UpdateText(string _name, string _text)
         {
             nameText.text = _name;
             dialogText.text = _text;
