@@ -44,7 +44,7 @@
         public List<Sprite> sprites = new List<Sprite>();
         Dictionary<string, Sprite> imageDic = new Dictionary<string, Sprite>();
 
-        [Header("劇本檔案庫 (多章節)")]
+        [Header("劇本檔案庫")]
         public List<TextAsset> storyChapters = new List<TextAsset>();
         // 🌟 新增：用來透過「檔案名稱」快速尋找劇本的字典
         private Dictionary<string, TextAsset> chapterDic = new Dictionary<string, TextAsset>();
@@ -59,12 +59,22 @@
         public bool isTransitioning = false; // 是否正在播放轉場動畫
         public bool isStartingSequence = false; // 標記目前是否正在播開場動畫
 
-    [Header("轉場特效綁定")]
+        [Header("轉場特效綁定")]
         public Image transitionPanel; // 拖曳剛剛做的全螢幕 Image 放到這裡
 
-        [Header("前導設定 (可選)")]
+        [Header("前導設定")]
         public GameObject prologueUI;         // 🌟 注意這裡變成了 GameObject！
         public float prologueWaitTime = 2.0f; // 前導圖片要在畫面上停留幾秒
+
+        [Header("音樂庫與喇叭綁定")]
+        public AudioSource bgmPlayer; // 專門播背景音樂的喇叭
+        public List<AudioClip> bgmClips = new List<AudioClip>(); // 讓你拖曳音樂檔案進來的清單
+        private Dictionary<string, AudioClip> bgmDic = new Dictionary<string, AudioClip>(); // 讓程式碼用名字找音樂的字典
+
+        [Header("循環音效與喇叭綁定")]
+        public AudioSource sfxPlayer; // 專門播循環音效的喇叭 (例如雨聲)
+        public List<AudioClip> sfxClips = new List<AudioClip>(); // 拖曳音效檔案進來的清單
+        private Dictionary<string, AudioClip> sfxDic = new Dictionary<string, AudioClip>(); // 用名字找音效的字典
 
     private void Awake()
         {
@@ -90,7 +100,24 @@
                     chapterDic[chapter.name] = chapter;
                 }
             }
-        }
+            // 🌟 自動將 bgmClips 清單轉換為名稱字典，方便後續透過 CSV 名字播放
+            foreach (var clip in bgmClips)
+            {
+                if (clip != null && !bgmDic.ContainsKey(clip.name))
+                {
+                bgmDic[clip.name] = clip;
+                }
+            }
+            // 🌟 自動將 sfxClips 清單轉換為名稱字典
+            foreach (var clip in sfxClips)
+            {
+                if (clip != null && !sfxDic.ContainsKey(clip.name))
+                {
+                sfxDic[clip.name] = clip;
+                }
+            }
+
+    }
 
     void Start()
     {
@@ -98,19 +125,23 @@
         StartCoroutine(GameStartSequence());
     }
 
-    // 🌟 全新新增：開場專屬的演出時間軸
+    // 🌟 修正版：開場專屬的演出時間軸（支援跳過前導圖）
     private System.Collections.IEnumerator GameStartSequence()
     {
         isTransitioning = true;
         isStartingSequence = true; // 鎖定劇本特效
 
-        // 1. 強制隱藏對話框，黑布瞬間拉上 (全黑)
+        // 1. 強制隱藏對話框，黑布瞬間拉上 (畫面維持全黑)
         if (uiPanel != null) uiPanel.SetActive(false);
         transitionPanel.gameObject.SetActive(true);
         transitionPanel.color = Color.black;
 
-        // 2. 如果你有綁定「前導圖物件」，就執行前導演出
-        if (prologueUI != null)
+        // 🌟 【關鍵修改】提早去檢查電腦記憶，看看這次是不是「時空跳躍」
+        string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
+
+        // 2. 判斷要不要執行前導演出
+        // 條件：必須有綁定物件，而且這次「不是時空跳躍（targetAnchor 是空的）」才播前導圖！
+        if (prologueUI != null && string.IsNullOrEmpty(targetAnchor))
         {
             // 確保前導圖開啟
             prologueUI.SetActive(true);
@@ -134,13 +165,21 @@
             // 把背景畫布重新打開，準備迎接正式遊戲
             if (background_imgur != null) background_imgur.gameObject.SetActive(true);
         }
+        else
+        {
+            // 🌟 防呆：如果是時空跳躍，確保前導圖是關閉的，且正常的背景畫布是開啟的
+            if (prologueUI != null) prologueUI.SetActive(false);
+            if (background_imgur != null) background_imgur.gameObject.SetActive(true);
+
+            // 讓畫面在全黑狀態下稍微停頓 0.5 秒，換場視覺感會更流暢
+            yield return new WaitForSeconds(0.5f);
+        }
 
         // 3. 正式讀取劇本指令 (判斷跳躍或新遊戲)
-        string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
         if (!string.IsNullOrEmpty(targetAnchor))
         {
             PlayerPrefs.DeleteKey("JumpTargetAnchor");
-            ExecuteAnchorJump(targetAnchor);
+            ExecuteAnchorJump(targetAnchor); // 在全黑的幕後偷偷把舞台和對話準備好
         }
         else
         {
@@ -150,7 +189,7 @@
             }
         }
 
-        // 4. 黑布慢慢拉開，並把對話框正式顯示出來！
+        // 4. 在錨點舞台都擺好後，黑布慢慢拉開，並把對話框正式顯示出來！
         if (uiPanel != null) uiPanel.SetActive(true);
         yield return StartCoroutine(FadeTransition(0f, 1.0f));
 
@@ -348,8 +387,9 @@
                 figure.sprite = GetSpriteByName(currentLine.figure_show);
         }
 
-        if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySound(currentLine.sfx); }
-        if (!string.IsNullOrEmpty(currentLine.BGM)) { PlaySound(currentLine.BGM); }
+        if (!string.IsNullOrEmpty(currentLine.BGM)) { PlayBGM(currentLine.BGM); }
+
+        if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySFX(currentLine.sfx); }
     }
 
     // 🌟 全新改良：精確辨識且支援「連續閃爍」的轉場協程
@@ -551,8 +591,67 @@
             return null;
         }
 
-        public void PlaySound(string soundName) { Debug.Log("🎵 播放音效：" + soundName); }
-    
+    /// <summary>
+    /// 🌟 讀取 CSV 指令並播放 BGM
+    /// </summary>
+    public void PlayBGM(string bgmName)
+    {
+        // 1. 如果劇本寫了「Stop」或「無」，就乖乖閉嘴
+        if (bgmName == "Stop" || bgmName == "無")
+        {
+            bgmPlayer.Stop();
+            bgmPlayer.clip = null;
+            return;
+        }
+
+        // 2. 檢查我們的音樂庫裡面有沒有這首歌？
+        if (bgmDic.ContainsKey(bgmName))
+        {
+            AudioClip targetClip = bgmDic[bgmName];
+
+            // 🌟 超級關鍵防呆：如果現在正在播的歌，就是劇本要求播的歌，那就「什麼都不要做」！
+            // 這樣才能確保玩家按下一句對話時，音樂不會一直從頭開始跳針
+            if (bgmPlayer.clip == targetClip && bgmPlayer.isPlaying) return;
+
+            // 換上新唱片，開始播放！
+            bgmPlayer.clip = targetClip;
+            bgmPlayer.Play();
+        }
+        else
+        {
+            Debug.LogWarning("【警告】找不到BGM音樂檔案：" + bgmName + "，請檢查檔案名稱與 CSV 填寫是否一致！");
+        }
+    }
+    /// <summary>
+    /// 🌟 讀取 CSV 指令並播放循環音效 (SFX)
+    /// </summary>
+    public void PlaySFX(string sfxName)
+    {
+        // 1. 如果劇本寫了「Stop」或「無」，就停止音效
+        if (sfxName == "Stop" || sfxName == "無")
+        {
+            sfxPlayer.Stop();
+            sfxPlayer.clip = null;
+            return;
+        }
+
+        // 2. 檢查音效庫裡面有沒有這個檔案？
+        if (sfxDic.ContainsKey(sfxName))
+        {
+            AudioClip targetClip = sfxDic[sfxName];
+
+            // 🌟 防呆：如果同一種音效正在播，就不重頭開始 (例如雨聲一直下)
+            if (sfxPlayer.clip == targetClip && sfxPlayer.isPlaying) return;
+
+            // 換上新音效，開始播放！
+            sfxPlayer.clip = targetClip;
+            sfxPlayer.Play();
+        }
+        else
+        {
+            Debug.LogWarning("【警告】找不到 SFX 音效檔案：" + sfxName + "，請檢查檔案名稱與 CSV 填寫是否一致！");
+        }
+    }
     public void UpdateText(string _name, string _text)
         {
             nameText.text = _name;

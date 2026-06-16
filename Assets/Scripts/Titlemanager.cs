@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections; // 🌟 必須加入這行，才能使用協程 (IEnumerator) 等待時間
 
 public class TitleManager : MonoBehaviour
 {
@@ -8,6 +9,11 @@ public class TitleManager : MonoBehaviour
 
     [Header("場景設定")]
     public string gameSceneName = "GameScene"; // 🌟 確認這裡是你遊戲場景的名字！
+    public float delayTime = 0.5f; // 點擊後等待幾秒才換場景 (讓音效有時間播完)
+
+    [Header("音效與喇叭綁定")]
+    public AudioSource sfxPlayer; // 剛剛做的 SFX_Player 喇叭
+    public AudioClip clickSound;  // 你的點擊音效檔案
 
     void Start()
     {
@@ -25,39 +31,72 @@ public class TitleManager : MonoBehaviour
         }
     }
 
-    // 1. 正常開始遊戲 (取代你原本單純的 StartGame)
+    // ==========================================
+    // 🎵 播放音效的小幫手 (三個按鈕都會呼叫它)
+    // ==========================================
+    private void PlayClickSound()
+    {
+        // 確保喇叭和音效檔案都有放，才執行播放
+        if (sfxPlayer != null && clickSound != null)
+        {
+            // PlayOneShot 的好處是可以「疊加播放」，不會切斷聲音
+            sfxPlayer.PlayOneShot(clickSound);
+        }
+    }
+
+    // ==========================================
+    // 1. 正常開始遊戲
+    // ==========================================
     public void StartNormalGame()
     {
+        PlayClickSound(); // 先播音效
+        StartCoroutine(DelayStartNormalGame()); // 啟動倒數計時器
+    }
+
+    private IEnumerator DelayStartNormalGame()
+    {
+        yield return new WaitForSeconds(delayTime); // 🌟 等待 0.5 秒讓音效飛一會兒
+
         Debug.Log("準備從頭開始遊戲...");
-
-        // 🌟 核心保險：清除任何殘留的跳轉指令，確保絕對是「從頭開始」
         PlayerPrefs.DeleteKey("JumpTargetAnchor");
-
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // 2. 時空跳躍開始遊戲 (按鈕要在 Inspector 填入要跳去的錨點名稱)
+    // ==========================================
+    // 2. 時空跳躍開始遊戲
+    // ==========================================
     public void StartJumpGame(string targetAnchorName)
     {
-        Debug.Log("準備時空跳躍至：" + targetAnchorName);
+        PlayClickSound(); // 先播音效
+        StartCoroutine(DelayStartJumpGame(targetAnchorName)); // 啟動倒數計時器，並把錨點名字帶過去
+    }
 
-        // 把玩家想去的錨點名稱存進電腦裡
+    private IEnumerator DelayStartJumpGame(string targetAnchorName)
+    {
+        yield return new WaitForSeconds(delayTime); // 🌟 等待 0.5 秒
+
+        Debug.Log("準備時空跳躍至：" + targetAnchorName);
         PlayerPrefs.SetString("JumpTargetAnchor", targetAnchorName);
         PlayerPrefs.Save();
-
-        // 載入遊戲場景
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // 3. 結束遊戲功能 (你原本寫好的，非常棒！)
+    // ==========================================
+    // 3. 結束遊戲功能
+    // ==========================================
     public void QuitGame()
     {
-        Debug.Log("執行結束遊戲指令...");
+        PlayClickSound(); // 先播音效
+        StartCoroutine(DelayQuitGame()); // 啟動倒數計時器
+    }
 
-        // 這是真正打包成 EXE 或遊戲檔後，用來關閉程式的語法
+    private IEnumerator DelayQuitGame()
+    {
+        yield return new WaitForSeconds(delayTime); // 🌟 等待 0.5 秒
+
+        Debug.Log("執行結束遊戲指令...");
         Application.Quit();
 
-        // 讓 Unity 編輯器裡面按 Play 測試時也能退出播放
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
