@@ -46,7 +46,7 @@
 
         [Header("劇本檔案庫")]
         public List<TextAsset> storyChapters = new List<TextAsset>();
-        // 🌟 新增：用來透過「檔案名稱」快速尋找劇本的字典
+        // 用來透過「檔案名稱」快速尋找劇本的字典
         private Dictionary<string, TextAsset> chapterDic = new Dictionary<string, TextAsset>();
 
         [Header("遊戲狀態")]
@@ -55,7 +55,7 @@
 
         public bool isEnding = false;
         public bool canClickToTitle = false;
-        private bool isSelectingChoice = false; // 🌟 新增：是否正在選擇分歧選項
+        private bool isSelectingChoice = false; // 是否正在選擇分歧選項
         public bool isTransitioning = false; // 是否正在播放轉場動畫
         public bool isStartingSequence = false; // 標記目前是否正在播開場動畫
 
@@ -63,18 +63,21 @@
         public Image transitionPanel; // 拖曳剛剛做的全螢幕 Image 放到這裡
 
         [Header("前導設定")]
-        public GameObject prologueUI;         // 🌟 注意這裡變成了 GameObject！
+        public GameObject prologueUI;         
         public float prologueWaitTime = 2.0f; // 前導圖片要在畫面上停留幾秒
 
         [Header("音樂庫與喇叭綁定")]
         public AudioSource bgmPlayer; // 專門播背景音樂的喇叭
-        public List<AudioClip> bgmClips = new List<AudioClip>(); // 讓你拖曳音樂檔案進來的清單
+        public List<AudioClip> bgmClips = new List<AudioClip>();
         private Dictionary<string, AudioClip> bgmDic = new Dictionary<string, AudioClip>(); // 讓程式碼用名字找音樂的字典
 
         [Header("循環音效與喇叭綁定")]
-        public AudioSource sfxPlayer; // 專門播循環音效的喇叭 (例如雨聲)
+        public AudioSource sfxPlayer; // 專門播循環音效的喇叭
         public List<AudioClip> sfxClips = new List<AudioClip>(); // 拖曳音效檔案進來的清單
         private Dictionary<string, AudioClip> sfxDic = new Dictionary<string, AudioClip>(); // 用名字找音效的字典
+
+        [Header("結尾卡設定")]
+        public GameObject epilogueUI;
 
     private void Awake()
         {
@@ -92,7 +95,7 @@
                 imageDic["琉璃立繪3"] = sprites[8];
             }
 
-            // 🌟 自動將 storyChapters 清單轉換為名稱字典，方便後續跳轉
+            //  自動將 storyChapters 清單轉換為名稱字典，方便後續跳轉
             foreach (var chapter in storyChapters)
             {
                 if (chapter != null && !chapterDic.ContainsKey(chapter.name))
@@ -100,7 +103,7 @@
                     chapterDic[chapter.name] = chapter;
                 }
             }
-            // 🌟 自動將 bgmClips 清單轉換為名稱字典，方便後續透過 CSV 名字播放
+            //  自動將 bgmClips 清單轉換為名稱字典，方便後續透過 CSV 名字播放
             foreach (var clip in bgmClips)
             {
                 if (clip != null && !bgmDic.ContainsKey(clip.name))
@@ -108,7 +111,7 @@
                 bgmDic[clip.name] = clip;
                 }
             }
-            // 🌟 自動將 sfxClips 清單轉換為名稱字典
+            //  自動將 sfxClips 清單轉換為名稱字典
             foreach (var clip in sfxClips)
             {
                 if (clip != null && !sfxDic.ContainsKey(clip.name))
@@ -125,7 +128,7 @@
         StartCoroutine(GameStartSequence());
     }
 
-    // 🌟 修正版：開場專屬的演出時間軸（支援跳過前導圖）
+    // 開場專屬的演出時間軸（支援跳過前導圖）
     private System.Collections.IEnumerator GameStartSequence()
     {
         isTransitioning = true;
@@ -136,7 +139,7 @@
         transitionPanel.gameObject.SetActive(true);
         transitionPanel.color = Color.black;
 
-        // 🌟 【關鍵修改】提早去檢查電腦記憶，看看這次是不是「時空跳躍」
+        // 提早去檢查電腦記憶，看看這次是不是「時空跳躍」
         string targetAnchor = PlayerPrefs.GetString("JumpTargetAnchor", "");
 
         // 2. 判斷要不要執行前導演出
@@ -167,7 +170,7 @@
         }
         else
         {
-            // 🌟 防呆：如果是時空跳躍，確保前導圖是關閉的，且正常的背景畫布是開啟的
+            // 如果是時空跳躍，確保前導圖是關閉的，且正常的背景畫布是開啟的
             if (prologueUI != null) prologueUI.SetActive(false);
             if (background_imgur != null) background_imgur.gameObject.SetActive(true);
 
@@ -215,9 +218,7 @@
         transitionPanel.color = new Color(0f, 0f, 0f, targetAlpha); // 確保最終數值精準
     }
 
-    /// <summary>
-    /// 🌟 全新新增：跨章節搜尋錨點並空降
-    /// </summary>
+    ///跨章節搜尋錨點並空降
     private void ExecuteAnchorJump(string targetAnchor)
     {
         // 掃描劇本檔案庫裡的所有章節
@@ -273,9 +274,8 @@
         }
     }
 
-    /// <summary>
-    /// 🌟 升級：現在支援直接用「檔案名稱 (string)」載入指定章節劇本
-    /// </summary>
+
+    ///「檔案名稱 (string)」載入指定章節劇本
     public void LoadChapter(string chapterName)
         {
             if (chapterDic.ContainsKey(chapterName))
@@ -299,7 +299,7 @@
             // 1. 檢查「剛剛播完的這句話」，它的 nextEvent 欄位有沒有填寫東西？
             string jumpTarget = dialogList[currentLineIndex].nextEvent;
 
-            // 🌟【關鍵新增】結局攔截機制：如果 nextEvent 填的是 END1 或 END2，直接導向對應的結局圖！
+            // 結局攔截機制：如果 nextEvent 填的是 END1 或 END2，直接導向對應的結局圖！
             if (jumpTarget == "END1" || jumpTarget == "END2")
             {
                 Debug.Log("劇本偵測到結局指令，準備顯示：" + jumpTarget);
@@ -354,7 +354,7 @@
             // 讀取 BGM、音效、背景、立繪
             ApplyEnvironmentData(currentLine);
 
-            // 🌟【完美修復】自動往上看一行，把上一行的對話內容顯示在對話框裡！
+            // 自動往上看一行，把上一行的對話內容顯示在對話框裡！
             if (currentLineIndex > 0)
             {
                 DialogData prevLine = dialogList[currentLineIndex - 1];
@@ -384,7 +384,7 @@
         }
     }
 
-    // 🌟【全新新增】專門處理畫面與聲音的獨立小幫手
+    // 專門處理畫面與聲音的獨立小幫手
     private void ApplyEnvironmentData(DialogData currentLine)
     {
         // 1. 處理背景
@@ -406,7 +406,7 @@
         if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySFX(currentLine.sfx); }
     }
 
-    // 🌟 將原本的 ApplyLineData 瘦身，讓它呼叫上面的小幫手
+    // 將原本的 ApplyLineData 瘦身，讓它呼叫上面的小幫手
     private void ApplyLineData(DialogData currentLine)
     {
         // 更新對話文字
@@ -415,7 +415,7 @@
         // 呼叫小幫手更新畫面與聲音
         ApplyEnvironmentData(currentLine);
     }
-    // 🌟 全新改良：精確辨識且支援「連續閃爍」的轉場協程
+    // 全新改良：精確辨識且支援「連續閃爍」的轉場協程
     private System.Collections.IEnumerator HandleTransitionLine(DialogData currentLine)
     {
         isTransitioning = true; // 鎖住玩家點擊
@@ -440,7 +440,7 @@
                 }
                 transitionPanel.color = Color.white;
 
-                // 🌟 關鍵：只有在「最後一次(第3次)」閃白的時候，才偷偷換掉背景跟立繪！
+                // 只有在「最後一次(第3次)」閃白的時候，才偷偷換掉背景跟立繪！
                 if (i == 2) ApplyLineData(currentLine);
 
                 // 快速變回透明
@@ -500,15 +500,14 @@
         isTransitioning = false; // 解除點擊鎖定
     }
 
-    /// <summary>
-    /// 🌟 新增：掃描連續選項並動態設定 UI 按鈕
-    /// </summary>
+
+    ///掃描連續選項並動態設定 UI 按鈕
     private void SetupChoiceBranch()
         {
             isSelectingChoice = true;
 
             if (choicePanel != null) choicePanel.SetActive(true);
-        // 🌟 核心：確保這段閃爍文字被開啟
+        // 確保這段閃爍文字被開啟
         if (Divergent_texts != null)
         {
             Divergent_texts.SetActive(true);
@@ -574,7 +573,7 @@
             if (choicePanel != null) choicePanel.SetActive(false);
             isSelectingChoice = false;
 
-        // 🌟 關閉閃爍文字
+        //  關閉閃爍文字
         if (Divergent_texts != null)
         {
             Divergent_texts.SetActive(false);
@@ -582,7 +581,7 @@
 
         isSelectingChoice = false;
 
-        // 🌟 核心修改：在「目前的劇本清單(dialogList)」裡面，尋找對應的 eventID
+        // 在「目前的劇本清單(dialogList)」裡面，尋找對應的 eventID
         for (int i = 0; i < dialogList.Count; i++)
             {
                 // 假設你的目標名稱 (例如 a07) 是寫在 CSV 的第 0 欄 (eventID)
@@ -605,9 +604,9 @@
             return null;
         }
 
-    /// <summary>
-    /// 🌟 讀取 CSV 指令並播放 BGM
-    /// </summary>
+
+    /// 讀取 CSV 指令並播放 BGM
+
     public void PlayBGM(string bgmName)
     {
         // 1. 如果劇本寫了「Stop」或「無」，就乖乖閉嘴
@@ -623,7 +622,7 @@
         {
             AudioClip targetClip = bgmDic[bgmName];
 
-            // 🌟 超級關鍵防呆：如果現在正在播的歌，就是劇本要求播的歌，那就「什麼都不要做」！
+            // 如果現在正在播的歌，就是劇本要求播的歌，那就「什麼都不要做」！
             // 這樣才能確保玩家按下一句對話時，音樂不會一直從頭開始跳針
             if (bgmPlayer.clip == targetClip && bgmPlayer.isPlaying) return;
 
@@ -636,9 +635,7 @@
             Debug.LogWarning("【警告】找不到BGM音樂檔案：" + bgmName + "，請檢查檔案名稱與 CSV 填寫是否一致！");
         }
     }
-    /// <summary>
-    /// 🌟 讀取 CSV 指令並播放循環音效 (SFX)
-    /// </summary>
+    ///  讀取 CSV 指令並播放循環音效 (SFX)
     public void PlaySFX(string sfxName)
     {
         // 1. 如果劇本寫了「Stop」或「無」，就停止音效
@@ -654,7 +651,7 @@
         {
             AudioClip targetClip = sfxDic[sfxName];
 
-            // 🌟 防呆：如果同一種音效正在播，就不重頭開始 (例如雨聲一直下)
+            // 如果同一種音效正在播，就不重頭開始 
             if (sfxPlayer.clip == targetClip && sfxPlayer.isPlaying) return;
 
             // 換上新音效，開始播放！
@@ -732,7 +729,7 @@
 
             if (clickPrompt != null) clickPrompt.SetActive(true);
 
-        // 🌟 進入結局時，永久寫入通關標記到玩家電腦裡！
+        // 進入結局時，永久寫入通關標記到玩家電腦裡！
         PlayerPrefs.SetInt("HasClearedEnding", 1);
         PlayerPrefs.Save();
 
@@ -743,12 +740,11 @@
 
         if (clickPrompt != null) clickPrompt.SetActive(true);
     }
-        /// <summary>
-        /// 🌟 讓任何指定的文字物件產生呼吸閃爍特效
-        /// </summary>
+    
+        /// 讓任何指定的文字物件產生呼吸閃爍特效
         private void ApplyBlinkEffect(GameObject textObj)
         {
-            // 防呆：如果沒放物件，或者物件目前是隱藏狀態，就直接跳出不執行
+            // 如果沒放物件，或者物件目前是隱藏狀態，就直接跳出不執行
             if (textObj == null || !textObj.activeSelf) return;
 
             // 計算 0 到 1 之間的呼吸數值
