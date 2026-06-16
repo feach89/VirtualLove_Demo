@@ -64,7 +64,7 @@
 
         [Header("前導設定")]
         public GameObject prologueUI;         
-        public float prologueWaitTime = 2.0f; // 前導圖片要在畫面上停留幾秒
+        public float prologueWaitTime = 5f; // 前導圖片要在畫面上停留幾秒
 
         [Header("音樂庫與喇叭綁定")]
         public AudioSource bgmPlayer; // 專門播背景音樂的喇叭
@@ -710,39 +710,51 @@
             Debug.Log("劇本檔案 [" + _textAsset.name + "] 讀取完成！行數：" + dialogList.Count);
         }
 
-        private System.Collections.IEnumerator ShowEndScreen(string endImageName)
-        {
-            isEnding = true;
-            canClickToTitle = false;
+    private System.Collections.IEnumerator ShowEndScreen(string endImageName)
+    {
+        isEnding = true;
+        canClickToTitle = false; // 鎖住點擊，避免玩家不小心跳過結局動畫
 
-            background_imgur.sprite = GetSpriteByName(endImageName);
-            figure.sprite = null;
-            UpdateText("", "");
+        // 階段 1：顯示結局 CG
+        background_imgur.sprite = GetSpriteByName(endImageName);
+        figure.sprite = null;
+        UpdateText("", ""); // 清空對話文字
 
-            if (uiPanel != null) uiPanel.SetActive(false);
-            if (clickPrompt != null) clickPrompt.SetActive(false);
-
-            yield return new WaitForSeconds(3f);
-
-            canClickToTitle = true;
-            Debug.Log("3秒已過，現在點擊可以回到標題畫面了！");
-
-            if (clickPrompt != null) clickPrompt.SetActive(true);
+        if (uiPanel != null) uiPanel.SetActive(false); // 隱藏對話框
+        if (clickPrompt != null) clickPrompt.SetActive(false); // 隱藏點擊提示
 
         // 進入結局時，永久寫入通關標記到玩家電腦裡！
         PlayerPrefs.SetInt("HasClearedEnding", 1);
         PlayerPrefs.Save();
 
-        yield return new WaitForSeconds(5f);
+        // 讓結局 CG 在畫面上停留 2 秒
+        yield return new WaitForSeconds(2f);
 
-        canClickToTitle = true;
-        Debug.Log("5秒已過，現在點擊可以回到標題畫面了！");
+        // 階段 2：黑幕轉場與結尾卡演出
+        transitionPanel.gameObject.SetActive(true); // 開啟黑布準備
 
+        // 黑布慢慢拉上 (畫面淡入至全黑)
+        yield return StartCoroutine(FadeTransition(1f, 1.0f));
+
+        // 趁全黑時，把背景圖關掉，並把結尾卡打開
+        if (background_imgur != null) background_imgur.gameObject.SetActive(false);
+        if (epilogueUI != null) epilogueUI.SetActive(true);
+
+        // 黑布慢慢拉開 (畫面淡出)，完美浮現你的結尾卡！
+        yield return StartCoroutine(FadeTransition(0f, 1.0f));
+
+        // 階段 3：合併等待時間與解鎖點擊
+        yield return new WaitForSeconds(2f);
+
+        canClickToTitle = true; // 解鎖點擊！
+        Debug.Log("2秒已過，現在點擊可以回到標題畫面了！");
+
+        // 顯示出「點擊回到標題」的閃爍提示字
         if (clickPrompt != null) clickPrompt.SetActive(true);
     }
-    
-        /// 讓任何指定的文字物件產生呼吸閃爍特效
-        private void ApplyBlinkEffect(GameObject textObj)
+
+    /// 讓任何指定的文字物件產生呼吸閃爍特效
+    private void ApplyBlinkEffect(GameObject textObj)
         {
             // 如果沒放物件，或者物件目前是隱藏狀態，就直接跳出不執行
             if (textObj == null || !textObj.activeSelf) return;
