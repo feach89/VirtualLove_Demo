@@ -30,10 +30,20 @@ public class TitleManager : MonoBehaviour
             }
         }
     }
+    void Update()
+    {
+        //開發者專屬作弊鍵：在標題畫面按下鍵盤的 F12，就會瞬間清除所有紀錄！
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            Debug.Log("【系統提示】玩家記憶已全部清除！請重新啟動場景。");
 
-    // ==========================================
-    // 🎵 播放音效的小幫手 (三個按鈕都會呼叫它)
-    // ==========================================
+            // 可選：如果你希望按下去之後，按鈕立刻消失給你看
+            if (jumpButtonObj != null) jumpButtonObj.SetActive(false);
+        }
+    }
+
     private void PlayClickSound()
     {
         // 確保喇叭和音效檔案都有放，才執行播放
@@ -44,9 +54,7 @@ public class TitleManager : MonoBehaviour
         }
     }
 
-    // ==========================================
     // 1. 正常開始遊戲
-    // ==========================================
     public void StartNormalGame()
     {
         PlayClickSound(); // 先播音效
@@ -62,9 +70,7 @@ public class TitleManager : MonoBehaviour
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // ==========================================
     // 2. 時空跳躍開始遊戲
-    // ==========================================
     public void StartJumpGame(string targetAnchorName)
     {
         PlayClickSound(); // 先播音效
@@ -81,9 +87,7 @@ public class TitleManager : MonoBehaviour
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // ==========================================
     // 3. 結束遊戲功能
-    // ==========================================
     public void QuitGame()
     {
         PlayClickSound(); // 先播音效
