@@ -68,7 +68,7 @@ a05_dialogue,40,系統,我也因為帶來的快感，終於忍不住想要射精
 a05_dialogue,41,琉璃,啊嗯……嗯嗯……將你的全部射出來吧……,,,,,,,a05_dialogue_41,
 a05_dialogue,42,琉璃,啊啊啊……啊嗯、嗯、嗯、啊……,,,,,,,a05_dialogue_42,
 a05_dialogue,43,琉璃,啊嗯……去了……！,,,,,,a06_dialogue,a05_dialogue_43,
-a06_dialogue,1,選項,（射在裡面）,CG2,,lyrical,sex_sfx,,a07_dialogue,a06_dialogue_1,Jump
+a06_dialogue,1,選項,（射在裡面）,CG2,None,lyrical,sex_sfx,,a07_dialogue,a06_dialogue_1,Jump
 a06_dialogue,2,選項,（射在外面）,,,,,,a08_dialogue,a06_dialogue_2,
 a07_dialogue,1,系統,我因為快感而將體內所留存的精液一滴不剩的射往琉璃的深處,,,,Stop,白屏閃現,,a07_dialogue_1,
 a07_dialogue,2,琉璃,啊……啊啊……嗯嗯啊！,,,,,,,a07_dialogue_2,

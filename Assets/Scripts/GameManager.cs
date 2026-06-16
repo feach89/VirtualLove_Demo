@@ -351,6 +351,22 @@
 
         if (currentLine.figure == "選項")
         {
+            // 讀取 BGM、音效、背景、立繪
+            ApplyEnvironmentData(currentLine);
+
+            // 🌟【完美修復】自動往上看一行，把上一行的對話內容顯示在對話框裡！
+            if (currentLineIndex > 0)
+            {
+                DialogData prevLine = dialogList[currentLineIndex - 1];
+                // 抓取上一行的角色名與對話，貼到畫面上
+                UpdateText(prevLine.figure, prevLine.dialogue);
+            }
+            else
+            {
+                // 萬一選項剛好在整個檔案的第 0 行 (防呆)
+                UpdateText("", "");
+            }
+
             SetupChoiceBranch();
             return;
         }
@@ -368,17 +384,16 @@
         }
     }
 
-    // 將原本負責「更新畫面上所有東西」的程式碼獨立出來
-    private void ApplyLineData(DialogData currentLine)
+    // 🌟【全新新增】專門處理畫面與聲音的獨立小幫手
+    private void ApplyEnvironmentData(DialogData currentLine)
     {
-        UpdateText(currentLine.figure, currentLine.dialogue);
-
+        // 1. 處理背景
         if (!string.IsNullOrEmpty(currentLine.background))
         {
             UpdateBackground(currentLine.background, currentLine.UID);
             background_imgur.transform.localScale = new Vector3(1.05f, 1.05f, 1f);
         }
-
+        // 2. 處理立繪
         if (!string.IsNullOrEmpty(currentLine.figure_show))
         {
             if (currentLine.figure_show == "None")
@@ -386,12 +401,20 @@
             else
                 figure.sprite = GetSpriteByName(currentLine.figure_show);
         }
-
+        // 3. 處理音樂與音效
         if (!string.IsNullOrEmpty(currentLine.BGM)) { PlayBGM(currentLine.BGM); }
-
         if (!string.IsNullOrEmpty(currentLine.sfx)) { PlaySFX(currentLine.sfx); }
     }
 
+    // 🌟 將原本的 ApplyLineData 瘦身，讓它呼叫上面的小幫手
+    private void ApplyLineData(DialogData currentLine)
+    {
+        // 更新對話文字
+        UpdateText(currentLine.figure, currentLine.dialogue);
+
+        // 呼叫小幫手更新畫面與聲音
+        ApplyEnvironmentData(currentLine);
+    }
     // 🌟 全新改良：精確辨識且支援「連續閃爍」的轉場協程
     private System.Collections.IEnumerator HandleTransitionLine(DialogData currentLine)
     {
@@ -401,9 +424,6 @@
         if (uiPanel != null) uiPanel.SetActive(false);
         transitionPanel.gameObject.SetActive(true);
 
-        // ==========================================
-        // 1. 連續白屏閃現 (閃 3 次)
-        // ==========================================
         if (currentLine.vfx == "白屏閃現")
         {
             float flashSpeed = 0.25f; // 閃爍的速度，數字越小閃越快
@@ -437,9 +457,6 @@
                 if (i < 2) yield return new WaitForSeconds(0.05f);
             }
         }
-        // ==========================================
-        // 2. 經典黑屏轉場 (關鍵字確實補回！)
-        // ==========================================
         else if (currentLine.vfx == "黑屏轉場")
         {
             float fadeSpeed = 1.5f; // 黑屏速度
@@ -470,9 +487,6 @@
             }
             transitionPanel.color = new Color(0f, 0f, 0f, 0f);
         }
-        // ==========================================
-        // 3. 防呆機制：沒寫、或寫錯字
-        // ==========================================
         else
         {
             // 如果 CSV 的 vfx 欄位寫了看不懂的字，就放棄特效，直接瞬間切換
